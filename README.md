@@ -4,7 +4,7 @@
 | ----------- | ----------- |
 | React & Redux      |  Firebase      |
 
-##The application is written using react hooks
+## The application is written using react hooks
 
 
 
