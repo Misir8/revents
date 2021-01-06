@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, createContext, Provider} from 'react';
 import {Button, Grid} from "semantic-ui-react";
 import EventList from "./EventList/EventList";
 import EventForm from "./EventForm/EventForm";
+import cuid from "cuid";
 
 const eventsFromDashboard = [
     {
@@ -52,12 +53,21 @@ const eventsFromDashboard = [
             }
         ]
     }
-]
+];
+
+export const EventContext = createContext({});
 
 const EventDashboard = () => {
 
     const [events, setEvent] = useState(eventsFromDashboard);
     const [isOpen, setIsOpen] = useState(false);
+
+    const handleCreateEvent = (newEvent) => {
+        newEvent.id = cuid();
+        newEvent.hostPhotoURL = '/assets/user.png';
+        console.log('dash', newEvent)
+        setEvent([...events, newEvent]);
+    }
 
     return (
         <div>
@@ -67,7 +77,12 @@ const EventDashboard = () => {
                 </Grid.Column>
                 <Grid.Column width={6}>
                     <Button positive content='Create Event' onClick={() => setIsOpen(!isOpen)}/>
-                    {isOpen && <EventForm setIsOpen={setIsOpen} />}
+                    <EventContext.Provider value={{
+                        handleCreateEvent
+                    }}>
+                        {isOpen && <EventForm setIsOpen={setIsOpen} />}
+                    </EventContext.Provider>
+
                 </Grid.Column>
             </Grid>
         </div>
