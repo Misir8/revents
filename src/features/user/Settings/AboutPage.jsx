@@ -1,11 +1,11 @@
 import React from 'react';
 
-const PeopleDashboard = () => {
+const AboutPage = () => {
     return (
         <div>
-
+            <h1>About</h1>
         </div>
     );
 };
 
-export default PeopleDashboard;
+export default AboutPage;
