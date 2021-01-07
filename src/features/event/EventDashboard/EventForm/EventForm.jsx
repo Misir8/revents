@@ -1,9 +1,9 @@
-import React, {Fragment, useState, useContext} from 'react';
+import React, {Fragment, useState, useContext, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {Button, Form, Segment} from "semantic-ui-react";
 import {EventContext} from "../EventDashboard";
 
-const EventForm = ({setIsOpen}) => {
+const EventForm = ({setIsOpen, selectedEvent}) => {
 
     const [form, setForm] = useState({
         title: '',
@@ -14,6 +14,12 @@ const EventForm = ({setIsOpen}) => {
     });
 
     const {handleCreateEvent} = useContext(EventContext);
+
+    useEffect(() => {
+        if (selectedEvent !== null){
+            setForm({...selectedEvent});
+        }
+    }, [selectedEvent])
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
@@ -83,7 +89,8 @@ const EventForm = ({setIsOpen}) => {
 };
 
 EventForm.propTypes = {
-    setIsOpen: PropTypes.func.isRequired
+    setIsOpen: PropTypes.func.isRequired,
+    selectedEvent: PropTypes.object
 }
 
 export default EventForm;

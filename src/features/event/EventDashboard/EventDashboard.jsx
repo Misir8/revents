@@ -1,4 +1,4 @@
-import React, {useState, createContext, Provider} from 'react';
+import React, {useState, createContext} from 'react';
 import {Button, Grid} from "semantic-ui-react";
 import EventList from "./EventList/EventList";
 import EventForm from "./EventForm/EventForm";
@@ -8,7 +8,7 @@ const eventsFromDashboard = [
     {
         id: '1',
         title: 'Trip to Tower of London',
-        date: '2018-03-27T11:00:00+00:00',
+        date: '2018-03-27',
         category: 'culture',
         description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
@@ -32,7 +32,7 @@ const eventsFromDashboard = [
     {
         id: '2',
         title: 'Trip to Punch and Judy Pub',
-        date: '2018-03-28T14:00:00+00:00',
+        date: '2018-03-28',
         category: 'drinks',
         description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
@@ -61,29 +61,61 @@ const EventDashboard = () => {
 
     const [events, setEvent] = useState(eventsFromDashboard);
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const handleCreateEvent = (newEvent) => {
-        newEvent.id = cuid();
-        newEvent.hostPhotoURL = '/assets/user.png';
-        console.log('dash', newEvent)
-        setEvent([...events, newEvent]);
+        if(newEvent.id){
+            const foundEvent = events.find(event => event.id === newEvent.id);
+            const index = events.indexOf(foundEvent);
+            const newEvents = [...events];
+            newEvents[index] = newEvent;
+            setEvent([...newEvents]);
+            setSelectedEvent(null);
+            setIsOpen(false);
+        }else{
+            newEvent.id = cuid();
+            newEvent.hostPhotoURL = '/assets/user.png';
+            setEvent([...events, newEvent]);
+        }
+
     }
+
+    const handleDeleteEvent = (id) => {
+        const newEvents = events.filter(event => event.id !== id);
+        setEvent([...newEvents]);
+    }
+
+    const handleSelectEvent = (event) => {
+        setSelectedEvent(event);
+        setIsOpen(true);
+    }
+
+    const handleCreateFormOpen = () => {
+        setIsOpen(true);
+        setSelectedEvent(null);
+    }
+
+
 
     return (
         <div>
             <Grid>
-                <Grid.Column width={10}>
-                    <EventList events={events}/>
-                </Grid.Column>
-                <Grid.Column width={6}>
-                    <Button positive content='Create Event' onClick={() => setIsOpen(!isOpen)}/>
-                    <EventContext.Provider value={{
-                        handleCreateEvent
-                    }}>
-                        {isOpen && <EventForm setIsOpen={setIsOpen} />}
-                    </EventContext.Provider>
-
-                </Grid.Column>
+                <EventContext.Provider value={{
+                    handleCreateEvent,
+                    handleSelectEvent,
+                    handleDeleteEvent
+                }}>
+                    <Grid.Column width={10}>
+                        <EventList events={events}/>
+                    </Grid.Column>
+                    <Grid.Column width={6}>
+                        <Button positive content='Create Event' onClick={handleCreateFormOpen}/>
+                        {isOpen &&
+                        <EventForm
+                            selectedEvent={selectedEvent}
+                            setIsOpen={setIsOpen}/>}
+                    </Grid.Column>
+                </EventContext.Provider>
             </Grid>
         </div>
     );

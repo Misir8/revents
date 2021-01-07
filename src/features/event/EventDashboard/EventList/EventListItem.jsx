@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import {Segment, Item, Button, List, Icon} from "semantic-ui-react";
 import EventAttendee from "./EventListAttendee";
+import {EventContext} from "../EventDashboard";
 
 const EventListItem = ({event}) => {
+
+    const {handleSelectEvent, handleDeleteEvent} = useContext(EventContext);
+
     return (
         <div>
             <Segment.Group>
@@ -35,7 +39,8 @@ const EventListItem = ({event}) => {
                 </Segment>
                 <Segment clearing>
                     <span>{event.description}</span>
-                    <Button as="a" color="teal" floated="right" content="View" />
+                    <Button onClick={() => handleDeleteEvent(event.id)} as="a" color="red" floated="right" content="Delete" />
+                    <Button onClick={() => handleSelectEvent(event)} as="a" color="teal" floated="right" content="View" />
                 </Segment>
             </Segment.Group>
         </div>
